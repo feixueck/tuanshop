@@ -17,17 +17,13 @@
 	<mvc:annotation-driven />
 	<!-- 设置使用注解的类所在的jar包 -->
 	<context:component-scan base-package="com.tuanshop.bb"></context:component-scan>
-<!-- 	<context:component-scan base-package="com.tuanshop.bb.biz"></context:component-scan> -->
-<!-- 	<context:component-scan base-package="com.tuanshop.bb.service"></context:component-scan> -->
-<!-- 	<context:component-scan base-package="com.tuanshop.bb.dao"></context:component-scan> -->
-
 	<!-- 完成请求和注解POJO的映射 -->
 	<bean
 		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
 	<!-- 权限控制拦截器 -->
-<!-- 	<mvc:interceptors> -->
-<!-- 		<bean class="com.tuanshop.bb.interceptor.AuthorityInteceptor" /> -->
-<!-- 	</mvc:interceptors> -->
+	<mvc:interceptors>
+		<bean class="com.tuanshop.bb.interceptor.AuthorityInteceptor" />
+	</mvc:interceptors>
 	<!-- 对转向页面的路径解析。prefix：前缀， suffix：后缀 -->
 	<!-- <bean id="viewResolver" -->
 	<!-- class="org.springframework.web.servlet.view.InternalResourceViewResolver"> -->
@@ -135,52 +131,4 @@
 	<mvc:resources location="/chart/" mapping="/chart/**" />
 	
 
-<<<<<<< .mine
-<!-- 简单的触发器 -->
-<!-- <bean id="simpleTimingJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean"> -->
-<!-- <property name="jobDetail"> -->
-<!-- <ref bean="jobBean" /> -->
-<!-- </property> -->
-<!-- <property name="startDelay"> -->
-<!-- <value>10000</value> -->
-<!-- </property> -->
-<!-- <property name="repeatInterval"> -->
-<!-- <value>60000</value> -->
-<!-- </property> -->
-<!-- </bean> -->
-
-<!-- 定义定时任务类的触发器-->
-<bean id="complexTimingJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-<property name="jobDetail">
-	<ref bean="jobBean" />
-</property>
-<property name="cronExpression">
-<!-- 每秒执行一次 -->
-	<value>0/1 * * * * ?</value>
-</property>
-</bean>
-
-<!--定时任务的管理器, 定义哪些定时器开启 -->
-<bean id="startQuertz" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-            <property name="triggers">
-                <list>
-                	<!-- 要开启的定时器放在这里 -->
-<!--                     <ref local="complexTimingJobTrigger"/> -->
-                </list>
-            </property>
-</bean>
-
-<!-- Spring触发工厂 -->
-<!-- <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean"> -->
-<!-- <property name="cronExpression"> -->
-<!-- <list> -->
-
-<!-- <ref bean="simpleTimingJobTrigger" /> -->
-<!-- </list> -->
-<!-- </property> -->
-<!-- </bean> -->
-
-
-=======
->>>>>>> .r256
 </beans>
