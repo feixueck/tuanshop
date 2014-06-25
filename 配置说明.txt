@@ -1,0 +1,36 @@
+++springMvc配置++
++++++++++++++++++++++++++++++++++++
+
+1.web.xml 
+
+
+#1064 - You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ''role'( 'id' bigint(20) not null auto_increment, 'name' varchar(20) default ' at line 1
+2.log4j配置(web.xml)
+<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>classpath:/conf/log4j.properties</param-value>
+</context-param>
+
+<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+</listener>
+
+
+4.配置静态资源 (访问图片等)
+配置dispatcher-servlet.xml 文件
+<mvc:annotation-driven />
+<mvc:annotation-driven />
+
+<mvc:view-controller path="/" view-name="login" />
+	<mvc:view-controller path="/header" view-name="layout/header" />
+	<mvc:view-controller path="/footer" view-name="layout/footer" />
+	<mvc:view-controller path="/left" view-name="layout/left" />
+
+
+	<mvc:resources location="/css/" mapping="/css/**" />
+	<mvc:resources location="/images/" mapping="/images/**" />
+	<mvc:resources location="/js/" mapping="/js/**" />
+	<mvc:resources location="/My97DatePicker/" mapping="/My97DatePicker/**" />
+	<mvc:resources location="/images/icon.gif" mapping="/favicon.ico" />
+	<mvc:resources location="/xml/" mapping="/xml/**" />
+	<mvc:resources location="/chart/" mapping="/chart/**" />

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="City">
+
+	<typeAlias alias="City" type="com.tuanshop.bb.pojo.dianping.CityDomain" />
+	<!-- 左邊pojo屬性，右邊數據庫字段名 -->
+	<resultMap id="CityResult" class="City">
+		<result property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="gmtCreate" column="gmt_create" />
+		<result property="gmtModified" column="gmt_modified" />
+		<result property="description" column="description" />
+	</resultMap>
+	
+	<sql id="column_List">
+	    id,
+		name,
+		gmt_create,
+		gmt_modified,
+		description
+	</sql>
+
+	<insert id="addCity">       
+		insert into city(
+		name,
+		gmt_create,
+		gmt_modified,
+		description
+		)
+		values(
+		#name#,
+		now(),
+		now(),
+		#description#
+		)
+	</insert>
+	<select id="findByName" resultMap="CityResult">
+		select * from city WHERE
+		rolename=#name# 
+	</select>
+	<select id="findById" resultMap="CityResult">
+		select * from  city  WHERE
+		id=#id#
+	</select>
+	<delete id="delRole">
+	   delete from  city  WHERE
+	   id=#id#
+	</delete>
+	<!--table update -->
+	<update id="update" parameterClass="City">
+		update  City  set gmt_modified = now()
+		<dynamic prepend="">
+			<isNotEmpty prepend="," property="name">
+				name =
+				#name#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="description">
+				description =
+				#description#
+			</isNotEmpty>
+			
+		</dynamic>
+		where id = #id#
+	</update>
+    
+    <!--query -->
+	<typeAlias alias="cityquery" type="com.tuanshop.bb.dao.query.CityQuery" />
+	<sql id="query_condition">
+		<dynamic prepend="where">
+			<isNotEmpty prepend="AND" property="rolename"
+				removeFirstPrepend="true">
+				name = #rolename# 
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	<sql id="limit_condition"> 
+		<![CDATA[ ORDER BY id desc ]]>
+		LIMIT #startPos#,#pageSize#
+	</sql> 
+	<select id="list_by_query_count" parameterClass="cityquery"
+		resultClass="java.lang.Integer">
+		select
+		count(*) from city
+		<include refid="query_condition" />
+	</select>
+
+	<select id="list_by_query" resultMap="CityResult"
+		parameterClass="rolequery">
+		select
+		<include refid="column_List" />
+		from city
+		<include refid="query_condition" />
+		<include refid="limit_condition" />
+	</select>
+    
+    
+</sqlMap>

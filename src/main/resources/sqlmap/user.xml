@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="userinfo">
+
+	<typeAlias alias="User" type="com.tuanshop.bb.pojo.UserInfoDomain" />
+
+	<resultMap id="UserResult" class="User">
+		<result property="id" column="id" />
+		<result property="username" column="username" />
+		<result property="address" column="address" />
+		<result property="userpwd" column="userpwd" />
+		<result property="gmtCreate" column="gmt_create" />
+		<result property="gmtModified" column="gmt_modified" />
+	</resultMap>
+
+	<sql id="column_List">
+		id,
+		username,
+		userpwd,
+		address,
+		gmt_create,
+		gmt_modified
+	</sql>
+
+
+
+	<insert id="addUser">
+		insert into user(
+		username,
+		userpwd,
+		address,
+		gmt_create,
+		gmt_modified
+		)
+		values(
+		#username#,
+		#userpwd#,
+		#address#,
+		now(),
+		now()
+		)
+	</insert>
+	<select id="findUser" resultMap="UserResult">
+		select * from user WHERE
+		username=#username# and userpwd=#userpwd#
+	</select>
+	<select id="findUserById" resultMap="UserResult">
+		select * from user WHERE
+		id=#id#
+	</select>
+	<select id="find_user_by_name_and_passwd" parameterClass="map"
+		resultMap="UserResult">
+		select * from user WHERE
+		username=#username# and userpwd=#password#
+	</select>
+	<!-- User表内记录总条数 -->
+	<select id="getTotalCount" resultClass="int">
+		select count(*) from user
+	</select>
+	<select id="findAllPageUser" resultMap="UserResult">
+		select * from user limit
+		#start#,5
+	</select>
+	<delete id="delete">
+		delete from user WHERE
+		id=#id#
+	</delete>
+	<!-- update -->
+	<update id="update" parameterClass="User">
+		update user set gmt_modified = now()
+		<dynamic prepend="">
+			<isNotEmpty prepend="," property="username">
+				username = #username#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="userpwd">
+				userpwd = #userpwd#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="address">
+				address = #address#
+			</isNotEmpty>
+		</dynamic>
+		where id = #id#
+	</update>
+
+	<!--query -->
+	<typeAlias alias="userquery" type="com.tuanshop.bb.dao.query.UserQuery" />
+	<sql id="query_condition">
+		<dynamic prepend="where">
+			<isNotEmpty prepend="AND" property="username"
+				removeFirstPrepend="true">
+				username = #username#
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	<sql id="limit_condition"> 
+		<![CDATA[ ORDER BY id desc ]]>
+		LIMIT #startPos#,#pageSize#
+	</sql>
+	<select id="list_by_query_count" parameterClass="userquery"
+		resultClass="java.lang.Integer">
+		select
+		count(*) from user
+		<include refid="query_condition" />
+	</select>
+
+	<select id="list_by_query" resultMap="UserResult"
+		parameterClass="userquery">
+		select
+		<include refid="column_List" />
+		from user
+		<include refid="query_condition" />
+		<include refid="limit_condition" />
+	</select>
+</sqlMap>

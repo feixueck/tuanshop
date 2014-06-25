@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Group">
+
+	<typeAlias alias="Group" type="com.tuanshop.bb.pojo.dianping.GroupInfoDomain" />
+	<!-- 左邊pojo屬性，右邊數據庫字段名 -->
+	<resultMap id="GroupResult" class="Group">
+		<result property="id" column="id" />
+		<result property="tuanId" column="tuan_id" />
+		<result property="gmtCreate" column="gmt_create" />
+		<result property="gmtModified" column="gmt_modified" />
+	</resultMap>
+	
+	<sql id="column_List">
+	    id,
+		tuan_id,
+		gmt_create,
+		gmt_modified
+	</sql>
+
+	<insert id="addGroup">       
+		insert into groups(
+	    id,
+		tuan_id,
+		gmt_create,
+		gmt_modified
+		)
+		values(
+		#id#,
+		#tuanId#,
+		now(),
+		now()
+		)
+	</insert>
+
+	<select id="findByName" resultMap="GroupResult">
+		select * from groups WHERE
+		rolename=#name# 
+	</select>
+	<select id="findById" resultMap="GroupResult">
+		select * from  groups  WHERE
+		id=#id#
+	</select>
+	<delete id="delRole">
+	   delete from  groups  WHERE
+	   id=#id#
+	</delete>
+
+	<update id="update" parameterClass="Group">
+		update  Sort  groups gmt_modified = now()
+		<dynamic prepend="">
+			<isNotEmpty prepend="," property="name">
+				name =
+				#name#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="description">
+				description =
+				#description#
+			</isNotEmpty>
+			
+		</dynamic>
+		where id = #id#
+	</update>
+    
+
+
+
+ 
+</sqlMap>

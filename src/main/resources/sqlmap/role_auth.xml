@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="roleAuthority">
+
+	<typeAlias alias="roleAuthority"
+		type="com.tuanshop.bb.pojo.RoleAuthorityInfoDomain" />
+
+	<resultMap id="baseResult" class="roleAuthority">
+		<result property="id" column="id" />
+		<result property="roleId" column="role_id" />
+		<result property="authorityId" column="authorith_id" />
+		<result property="description" column="description" />
+		<result property="gmtCreate" column="gmt_create" />
+		<result property="gmtModified" column="gmt_modified" />
+	</resultMap>
+
+	<sql id="column_List">
+		id,
+		role_id,
+		authorith_id,
+		description,
+		gmt_create,
+		gmt_modified
+	</sql>
+
+
+
+	<insert id="add">
+		insert into role_authority(
+		role_id,
+		authorith_id,
+		description,
+		gmt_create,
+		gmt_modified
+		)
+		values(
+		#roleId#,
+		#authorityId#,
+		#description#,
+		now(),
+		now()
+		)
+	</insert>
+	<select id="get_role_auth_list" resultMap="baseResult">
+		select * from role_authority
+		<dynamic prepend="where">
+			<isNotEmpty prepend="AND" property="roleId"
+				removeFirstPrepend="true">
+				role_id = #roleId#
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="authorityId"
+				removeFirstPrepend="true">
+				authorith_id = #authorityId#
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+
+	<delete id="delete">
+		delete from role_authority WHERE
+		role_id=#roleId#
+	</delete>
+
+
+
+</sqlMap>

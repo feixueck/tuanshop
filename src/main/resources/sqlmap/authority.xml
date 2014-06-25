@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Authority">
+
+	<typeAlias alias="Authority" type="com.tuanshop.bb.pojo.AuthorityInfoDomain" />
+	<!-- 左边pojo属性，右边数据库字段 -->
+	<resultMap id="AuthorityResult" class="Authority">
+		<result property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="gmtCreate" column="gmt_create" />
+		<result property="gmtModified" column="gmt_modified" />
+		<result property="description" column="description" />
+	</resultMap>
+	
+	<sql id="column_List">
+	    id,
+		name,
+		gmt_create,
+		gmt_modified,
+		description
+	</sql>
+
+	<insert id="addAuthority">       
+		insert into Authority(
+		name,
+		gmt_create,
+		gmt_modified,
+		description
+		)
+		values(
+		#name#,
+		now(),
+		now(),
+		#description#
+		)
+	</insert>
+	<select id="findByName" resultMap="AuthorityResult">
+		select * from role WHERE
+		rolename=#name# 
+	</select>
+	<select id="findauthid" resultMap="AuthorityResult">
+		select * from  Authority  WHERE
+		id=#id#
+	</select>
+	<delete id="dltAuthority">
+	   delete from  Authority  WHERE
+	   id=#id#
+	</delete>
+	<!--table update -->
+	<update id="update" parameterClass="Authority">
+		update  Authority  set gmt_modified = now()
+		<dynamic prepend="">
+			<isNotEmpty prepend="," property="name">
+				name =
+				#name#
+			</isNotEmpty>
+				<isNotEmpty prepend="," property="description">
+				description =
+				#description#
+			</isNotEmpty>
+		</dynamic>
+		where id = #id#
+	</update>
+    
+    <!--query -->
+	<typeAlias alias="Authorityquery" type="com.tuanshop.bb.dao.query.AuthorityQuery" />
+	<sql id="query_condition">
+		<dynamic prepend="where">
+			<isNotEmpty prepend="AND" property="authorityname"
+				removeFirstPrepend="true">
+				name = #authorityname# 
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	<sql id="limit_condition"> 
+		<![CDATA[ ORDER BY id desc ]]>
+		LIMIT #startPos#,#pageSize#
+	</sql> 
+	<select id="list_by_query_count" parameterClass="authorityquery"
+		resultClass="java.lang.Integer">
+		select
+		count(*) from Authority
+		<include refid="query_condition" />
+	</select>
+
+	<select id="list_by_query" resultMap="AuthorityResult"
+		parameterClass="authorityquery">
+		select
+		<include refid="column_List" />
+		from Authority
+		<include refid="query_condition" />
+		<include refid="limit_condition" />
+	</select>
+    
+    
+</sqlMap>

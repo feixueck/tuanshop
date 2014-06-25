@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Groupon">
+
+	<typeAlias alias="Groupon" type="com.tuanshop.bb.pojo.dianping.GrouponInfoDomain" />
+	<!-- 左邊pojo屬性，右邊數據庫字段名 -->
+	<resultMap id="GrouponResult" class="Groupon">
+		<result property="id" column="id" />
+		<result property="cityName" column="city_name" />
+		<result property="source" column="source" />
+		<result property="title" column="title" />
+		<result property="describe" column="describe" />
+		<result property="imgUrl" column="img_url" />
+		<result property="maxType" column="max_type" />
+		<result property="mainTipe" column="main_tipe" />
+		<result property="startTime" column="start_time" />
+		<result property="overTime" column="over_time" />
+		<result property="purchaseCount" column="purchase_count" />
+		<result property="price" column="price" />
+		<result property="currentPrice" column="current_price" />
+		<result property="criteria" column="criteria" />
+		<result property="notice" column="notice" />
+		<result property="detail" column="detail" />
+		<result property="bsName" column="bs_name" />
+		<result property="phon" column="phon" />
+		<result property="bsAddress" column="bs_address" />
+		<result property="longitude" column="longitude" />
+		<result property="latitude" column="latitude" />
+		<result property="trafficInfo" column="trafficInfo" />
+
+	</resultMap>
+
+	<sql id="column_List">
+		id,
+		city_name,
+		source,
+		title,
+		describes,
+		img_url,
+		max_type,
+		main_tipe,
+		start_time,
+		over_time,
+		purchase_count,
+		price,
+		current_price,
+		criteria,
+		notice,
+		detail,
+		bs_name,
+		phon,
+		bs_address,
+		longitude,
+		latitude,
+		trafficInfo
+	</sql>
+
+	<insert id="addGroupon">
+	INSERT INTO `groupon` (
+	city_name,
+	source,
+	title,
+	describes,
+	img_url,
+	max_type,
+	main_tipe,
+	start_time,
+	over_time,
+	purchase_count,
+	price,
+	current_price,
+	criteria,
+	notice,
+	detail,
+	bs_name,
+	phon,
+	bs_address,
+	longitude,
+	latitude,
+	trafficInfo
+	) VALUES(
+	#cityName#,
+	#source#,
+	#title#,
+	#describe#,
+	#imgUrl#,
+	#maxType#,
+	#mainTipe#,
+	now(),
+	now(),
+	#purchaseCount#,
+	#price#,
+	#currentPrice#,
+	#criteria#,
+	#notice#,
+	#detail#,
+	#bsName#,
+	#phon#,
+	#bsAddress#,
+	#longitude#,
+	#latitude#,
+	#trafficInfo#
+	)
+</insert>
+
+	<select id="findByName" resultMap="GrouponResult">
+		select * from groupon
+	</select>
+	<select id="findById" resultMap="GrouponResult">
+		select * from  groupon 
+	
+	</select>
+	<delete id="delRole">
+	   delete from  groupon  WHERE
+	   id=#id#
+	</delete>
+    
+
+
+
+ 
+</sqlMap>

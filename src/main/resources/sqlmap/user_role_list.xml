@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="userroleinfo">
+
+	<typeAlias alias="UserRole" type="com.tuanshop.bb.pojo.UserRoleInfoDomain" />
+   
+	<resultMap id="UserRoleResult" class="UserRole">   
+		<result property="id" column="id" />
+		<result property="userId" column="user_id" />
+		<result property="roleId" column="role_id" />        
+		<result property="gmtCreate" column="gmt_create" />
+		<result property="gmtModified" column="gmt_modified" />
+		<result property="description" column="description" />
+	</resultMap>   
+                            
+	<sql id="column_List">
+		id,
+		user_id,
+		role_id,
+		gmt_create,
+		gmt_modified,
+		description
+	</sql>
+
+
+
+	<insert id="addUserRole">
+		insert into user_role(
+		user_id,
+		role_id,
+	    gmt_create,
+		gmt_modified,
+		description
+		)
+		values(
+		#userId#,
+		#roleId#,
+		now(),
+		now(),
+		#description#
+		)
+	</insert>
+	<select id="findUser" resultMap="UserRoleResult">
+		select * from user_role WHERE
+		username=#username# and userpwd=#userpwd#
+	</select>
+	<select id="findUserById" resultMap="UserRoleResult">
+		select * from user_role WHERE
+		id=#id#
+	</select>
+	<!-- User表内记录总条数 -->
+	<select id="getTotalCount" resultClass="int">
+		select count(*) from user_role
+	</select>
+	<select id="findAllPageUser" resultMap="UserRoleResult">
+		select * from user_role limit
+		#start#,5
+	</select>
+<!-- update -->
+<update id="update" parameterClass="UserRole">
+		update user_role set gmt_modified = now()
+		<dynamic prepend="">
+			<isNotEmpty prepend="," property="username">
+				username = #username#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="userpwd">
+				userpwd = #userpwd#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="address">
+				address = #address#
+			</isNotEmpty>
+		</dynamic>
+		where id = #id#
+</update>
+	
+	<!--query -->
+	<typeAlias alias="userrolequery" type="com.tuanshop.bb.dao.query.UserRoleQuery" />
+	<sql id="query_condition">
+		<dynamic prepend="where">
+			<isNotEmpty prepend="AND" property="name"
+				removeFirstPrepend="true">
+				name = #name# 
+			</isNotEmpty>
+				<isNotEmpty prepend="AND" property="id"
+				removeFirstPrepend="true">
+				user_id = #id# 
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	<sql id="limit_condition"> 
+		<![CDATA[ ORDER BY id desc ]]>
+		LIMIT #startPos#,#pageSize#
+	</sql> 
+	<select id="list_by_query_count" parameterClass="userrolequery"
+		resultClass="java.lang.Integer">
+		select
+		count(*) from user_role
+		<include refid="query_condition" />
+	</select>
+
+	<select id="list_by_query" resultMap="UserRoleResult"
+		parameterClass="userRolequery">
+		select
+		<include refid="column_List" />
+		from user_role
+		<include refid="query_condition" />
+		<include refid="limit_condition" />
+	</select>
+	  	<select id="findUserRole" resultMap="UserRoleResult">
+		select * from user_role WHERE
+		user_id=#userId# 
+	</select>
+		 	<select id="findUserRoleList" resultMap="UserRoleResult">
+		select * from user_role 
+	    </select>
+	
+	<delete id="dltUserRole">
+		delete from user_role WHERE
+		user_id=#userId#
+	</delete>
+
+	 
+</sqlMap>

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="  
+    http://www.springframework.org/schema/beans   
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+    http://www.springframework.org/schema/context  
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd  
+    http://www.springframework.org/schema/mvc  
+    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd  
+    ">
+	<!-- 启用spring mvc 注解 -->
+	<context:annotation-config />
+	<mvc:annotation-driven />
+	<!-- 设置使用注解的类所在的jar包 -->
+	<context:component-scan base-package="com.tuanshop.bb"></context:component-scan>
+	<!-- 完成请求和注解POJO的映射 -->
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+	<!-- 权限控制拦截器 -->
+	<mvc:interceptors>
+		<bean class="com.tuanshop.bb.interceptor.AuthorityInteceptor" />
+	</mvc:interceptors>
+	<!-- 对转向页面的路径解析。prefix：前缀， suffix：后缀 -->
+	<!-- <bean id="viewResolver" -->
+	<!-- class="org.springframework.web.servlet.view.InternalResourceViewResolver"> -->
+	<!-- <property name="prefix" value="/WEB-INF/jsp/" /> -->
+	<!-- <property name="suffix" value=".jsp" /> -->
+	<!-- </bean> -->
+	<!-- 针对freemarker的视图配置 -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.freemarker.FreeMarkerView" />
+		<property name="cache" value="true" />
+		<property name="prefix" value="" />
+		<property name="suffix" value=".ftl" />
+		<property name="contentType" value="text/html;charset=UTF-8"></property>
+		<property name="requestContextAttribute" value="request" />
+		<property name="exposeSpringMacroHelpers" value="true" />
+		<property name="exposeRequestAttributes" value="true" />
+		<property name="exposeSessionAttributes" value="true" />
+	</bean>
+
+	<bean id="freemarkerConfig"
+		class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPath" value="/WEB-INF/view/" />
+		<property name="freemarkerSettings">
+			<props>
+				<prop key="template_update_delay">0</prop>
+				<prop key="default_encoding">UTF-8</prop>
+				<prop key="url_escaping_charset">UTF-8</prop>
+				<prop key="defaultEncoding">UTF-8</prop>
+				<prop key="locale">zh_CN</prop>
+				<prop key="number_format">0.##########</prop>
+				<prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+				<prop key="classic_compatible">true</prop>
+				<prop key="template_exception_handler">ignore</prop>
+			</props>
+		</property>
+		<property name="freemarkerVariables">
+			<map>
+				<entry key="stringUtil" value-ref="stringUtils" />
+				<entry key="authUtil" value-ref="authUtil" />
+				<entry key="global" value="tuanshop" />
+				<entry key="staticServer" value="http://localhost:8080" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="memCachedPool" class="com.whalin.MemCached.SockIOPool"
+		factory-method="getInstance" init-method="initialize" destroy-method="shutDown">
+		<constructor-arg>
+			<value>memCachedPool</value>
+		</constructor-arg>
+		<property name="servers">
+			<list>
+				<value>192.168.1.234:11211</value>
+			</list>
+		</property>
+		<property name="initConn">
+			<value>20</value>
+		</property>
+
+		<property name="minConn">
+			<value>10</value>
+		</property>
+
+		<property name="maxConn">
+			<value>50</value>
+		</property>
+
+		<property name="maintSleep">
+			<value>3000</value>
+		</property>
+
+		<property name="nagle">
+			<value>false</value>
+		</property>
+
+		<property name="socketTO">
+			<value>3000</value>
+		</property>
+	</bean>
+	<bean id="memCachedClient" class="com.whalin.MemCached.MemCachedClient">
+		<constructor-arg>
+			<value>memCachedPool</value>
+		</constructor-arg>
+	</bean>
+
+
+	<bean id="stringUtils" class="com.tuanshop.bb.util.StringUtils" />
+	<bean id="authUtil" class="com.tuanshop.bb.util.AuthUtil"></bean>
+
+	<mvc:view-controller path="/" view-name="login" />
+	<mvc:view-controller path="/header" view-name="layout/header" />
+	<mvc:view-controller path="/footer" view-name="layout/footer" />
+	<mvc:view-controller path="/left" view-name="layout/left" />
+
+
+	<mvc:resources location="/css/" mapping="/css/**" />
+	<mvc:resources location="/images/" mapping="/images/**" />
+	<mvc:resources location="/js/" mapping="/js/**" />
+	<mvc:resources location="/scripts/" mapping="/scripts/**" />
+	<mvc:resources location="/My97DatePicker/" mapping="/My97DatePicker/**" />
+	<mvc:resources location="/images/icon.gif" mapping="/favicon.ico" />
+	<mvc:resources location="/xml/" mapping="/xml/**" />
+	<mvc:resources location="/chart/" mapping="/chart/**" />
+	
+	
+	
+	
+	
+<!-- 定时任务类 -->
+<bean id="TestTime" class="com.tuanshop.bb.TestTime" />
+<!-- 定义定时任务类要执行的方法 -->
+<bean id="jobBean" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+    <property name="targetObject">
+     <ref bean="TestTime"/>
+    </property>
+    <property name="targetMethod">
+     <value>running</value>
+    </property>
+  </bean>
+
+<!-- 简单的触发器 -->
+<!-- <bean id="simpleTimingJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean"> -->
+<!-- <property name="jobDetail"> -->
+<!-- <ref bean="jobBean" /> -->
+<!-- </property> -->
+<!-- <property name="startDelay"> -->
+<!-- <value>10000</value> -->
+<!-- </property> -->
+<!-- <property name="repeatInterval"> -->
+<!-- <value>60000</value> -->
+<!-- </property> -->
+<!-- </bean> -->
+
+<!-- 定义定时任务类的触发器-->
+<bean id="complexTimingJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+<property name="jobDetail">
+	<ref bean="jobBean" />
+</property>
+<property name="cronExpression">
+<!-- 每秒执行一次 -->
+	<value>0/1 * * * * ?</value>
+</property>
+</bean>
+
+<!--定时任务的管理器, 定义哪些定时器开启 -->
+<bean id="startQuertz" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+            <property name="triggers">
+                <list>
+                	<!-- 要开启的定时器放在这里 -->
+                    <ref local="complexTimingJobTrigger"/>
+                </list>
+            </property>
+</bean>
+
+<!-- Spring触发工厂 -->
+<!-- <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean"> -->
+<!-- <property name="cronExpression"> -->
+<!-- <list> -->
+
+<!-- <ref bean="simpleTimingJobTrigger" /> -->
+<!-- </list> -->
+<!-- </property> -->
+<!-- </bean> -->
+
+
+</beans>

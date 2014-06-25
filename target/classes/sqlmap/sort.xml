@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Sort">
+
+	<typeAlias alias="Sort" type="com.tuanshop.bb.pojo.dianping.SortDomain" />
+	<!-- 左邊pojo屬性，右邊數據庫字段名 -->
+	<resultMap id="SortResult" class="Sort">
+		<result property="id" column="id" />
+		<result property="maxName" column="max_name" />
+        <result property="mainName" column="main_name" />
+		<result property="gmtCreate" column="gmt_create" />
+		<result property="gmtModified" column="gmt_modified" />
+		<result property="description" column="description" />
+	</resultMap>
+	
+	<sql id="column_List">
+	    id,
+		max_name,
+		main_name,
+		gmt_create,
+		gmt_modified,
+		description
+	</sql>
+
+	<insert id="addSort">       
+		insert into sort(
+		max_name,
+		main_name,
+		gmt_create,
+		gmt_modified,
+		description
+		)
+		values(
+		#maxName#,
+		#mainName#,
+		now(),
+		now(),
+		#description#
+		)
+	</insert>
+
+	<select id="findByName" resultMap="SortResult">
+		select * from sort WHERE
+		rolename=#name# 
+	</select>
+	<select id="findById" resultMap="SortResult">
+		select * from  sort  WHERE
+		id=#id#
+	</select>
+	<delete id="delRole">
+	   delete from  sort  WHERE
+	   id=#id#
+	</delete>
+
+	<update id="update" parameterClass="Sort">
+		update  Sort  set gmt_modified = now()
+		<dynamic prepend="">
+			<isNotEmpty prepend="," property="name">
+				name =
+				#name#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="description">
+				description =
+				#description#
+			</isNotEmpty>
+			
+		</dynamic>
+		where id = #id#
+	</update>
+    
+
+	<typeAlias alias="sortquery" type="com.tuanshop.bb.dao.query.SortQuery" />
+	<sql id="query_condition">
+		<dynamic prepend="where">
+			<isNotEmpty prepend="AND" property="rolename"
+				removeFirstPrepend="true">
+				name = #rolename# 
+			</isNotEmpty>
+		</dynamic>
+	</sql>
+	<sql id="limit_condition"> 
+		<![CDATA[ ORDER BY id desc ]]>
+		LIMIT #startPos#,#pageSize#
+	</sql> 
+	<select id="list_by_query_count" parameterClass="sortquery"
+		resultClass="java.lang.Integer">
+		select
+		count(*) from sort
+		<include refid="query_condition" />
+	</select>
+
+	<select id="list_by_query" resultMap="SortResult"
+		parameterClass="sortquery">
+		select
+		<include refid="column_List" />
+		from sort
+		<include refid="query_condition" />
+		<include refid="limit_condition" />
+	</select>
+
+ 
+</sqlMap>
